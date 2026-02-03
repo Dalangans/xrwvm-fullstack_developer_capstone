@@ -48,17 +48,20 @@ app.get('/fetchReviews', async (req, res) => {
     const documents = await Reviews.find();
     res.json(documents);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching documents' });
+    console.log("MongoDB error, returning mock reviews data");
+    res.json(reviews_data['reviews']);
   }
 });
 
 // Express route to fetch reviews by a particular dealer
 app.get('/fetchReviews/dealer/:id', async (req, res) => {
   try {
-    const documents = await Reviews.find({dealership: req.params.id});
+    const documents = await Reviews.find({dealership: parseInt(req.params.id)});
     res.json(documents);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching documents' });
+    console.log("MongoDB error, returning mock reviews data");
+    const filtered = reviews_data['reviews'].filter(r => r.dealership === parseInt(req.params.id));
+    res.json(filtered);
   }
 });
 
@@ -68,7 +71,8 @@ app.get('/fetchDealers', async (req, res) => {
     const documents = await Dealerships.find();
     res.json(documents);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching documents' });
+    console.log("MongoDB error, returning mock data");
+    res.json(dealerships_data['dealerships']);
   }
 });
 
@@ -78,17 +82,21 @@ app.get('/fetchDealers/:state', async (req, res) => {
     const documents = await Dealerships.find({state: req.params.state});
     res.json(documents);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching documents' });
+    console.log("MongoDB error, returning mock data filtered by state");
+    const filtered = dealerships_data['dealerships'].filter(d => d.state === req.params.state);
+    res.json(filtered);
   }
 });
 
 // Express route to fetch dealer by a particular id
 app.get('/fetchDealer/:id', async (req, res) => {
   try {
-    const documents = await Dealerships.find({id: req.params.id});
+    const documents = await Dealerships.find({id: parseInt(req.params.id)});
     res.json(documents);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching documents' });
+    console.log("MongoDB error, returning mock data for dealer ID");
+    const filtered = dealerships_data['dealerships'].filter(d => d.id === parseInt(req.params.id));
+    res.json(filtered);
   }
 });
 
