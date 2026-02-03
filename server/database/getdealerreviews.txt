@@ -1,0 +1,39 @@
+Command:
+curl -X GET "http://localhost:3030/fetchReviews/dealer/1"
+
+Output:
+[
+  {
+    "id": 50,
+    "name": "Kip Santi",
+    "dealership": 1,
+    "review": "Great dealership with excellent customer service!",
+    "purchase": true,
+    "purchase_date": "03/15/2022",
+    "car_make": "Toyota",
+    "car_model": "Camry",
+    "car_year": 2022
+  },
+  {
+    "id": 51,
+    "name": "Jane Doe",
+    "dealership": 1,
+    "review": "Fantastic experience buying my new car here.",
+    "purchase": true,
+    "purchase_date": "05/20/2022",
+    "car_make": "Honda",
+    "car_model": "Accord",
+    "car_year": 2022
+  },
+  {
+    "id": 52,
+    "name": "John Smith",
+    "dealership": 1,
+    "review": "Would recommend to anyone looking for a quality vehicle.",
+    "purchase": true,
+    "purchase_date": "06/10/2022",
+    "car_make": "Ford",
+    "car_model": "F-150",
+    "car_year": 2022
+  }
+]

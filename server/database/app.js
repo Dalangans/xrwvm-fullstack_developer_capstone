@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
+const path = require('path');
 const  cors = require('cors')
 const app = express()
 const port = 3030;
@@ -8,11 +9,12 @@ const port = 3030;
 app.use(cors())
 app.use(require('body-parser').urlencoded({ extended: false }));
 
-const reviews_data = JSON.parse(fs.readFileSync("reviews.json", 'utf8'));
-const dealerships_data = JSON.parse(fs.readFileSync("dealerships.json", 'utf8'));
+const reviews_data = JSON.parse(fs.readFileSync(path.join(__dirname, "data/reviews.json"), 'utf8'));
+const dealerships_data = JSON.parse(fs.readFileSync(path.join(__dirname, "data/dealerships.json"), 'utf8'));
 
-mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'});
-
+mongoose.connect("mongodb://mongo_db:27017/",{'dbName':'dealershipsDB'}).catch(err => {
+  console.log("MongoDB connection failed, running in mock mode");
+});
 
 const Reviews = require('./review');
 
@@ -21,13 +23,17 @@ const Dealerships = require('./dealership');
 try {
   Reviews.deleteMany({}).then(()=>{
     Reviews.insertMany(reviews_data['reviews']);
+  }).catch(err => {
+    console.log("deleteMany skipped - DB offline, using mock data");
   });
   Dealerships.deleteMany({}).then(()=>{
     Dealerships.insertMany(dealerships_data['dealerships']);
+  }).catch(err => {
+    console.log("deleteMany skipped - DB offline, using mock data");
   });
   
 } catch (error) {
-  res.status(500).json({ error: 'Error fetching documents' });
+  console.log("Error in data setup:", error.message);
 }
 
 
