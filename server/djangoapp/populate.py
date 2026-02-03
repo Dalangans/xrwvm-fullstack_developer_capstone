@@ -13,21 +13,21 @@ def initiate():
             car_make_instances.append(CarMake.objects.create(name=data['name'], description=data['description']))
     # Create CarModel instances with the corresponding CarMake instances
     car_model_data = [
-      {"name":"Pathfinder", "type":"SUV", "year": 2023, "make":car_make_instances[0]},
-      {"name":"Qashqai", "type":"SUV", "year": 2023, "make":car_make_instances[0]},
-      {"name":"XTRAIL", "type":"SUV", "year": 2023, "make":car_make_instances[0]},
-      {"name":"A-Class", "type":"SUV", "year": 2023, "make":car_make_instances[1]},
-      {"name":"C-Class", "type":"SUV", "year": 2023, "make":car_make_instances[1]},
-      {"name":"E-Class", "type":"SUV", "year": 2023, "make":car_make_instances[1]},
-      {"name":"A4", "type":"SUV", "year": 2023, "make":car_make_instances[2]},
-      {"name":"A5", "type":"SUV", "year": 2023, "make":car_make_instances[2]},
-      {"name":"A6", "type":"SUV", "year": 2023, "make":car_make_instances[2]},
-      {"name":"Sorrento", "type":"SUV", "year": 2023, "make":car_make_instances[3]},
-      {"name":"Carnival", "type":"SUV", "year": 2023, "make":car_make_instances[3]},
-      {"name":"Cerato", "type":"Sedan", "year": 2023, "make":car_make_instances[3]},
-      {"name":"Corolla", "type":"Sedan", "year": 2023, "make":car_make_instances[4]},
-      {"name":"Camry", "type":"Sedan", "year": 2023, "make":car_make_instances[4]},
-      {"name":"Kluger", "type":"SUV", "year": 2023, "make":car_make_instances[4]},
+      {"name":"Pathfinder", "type":"SUV", "year": 2023, "make":car_make_instances[0], "dealer_id": 1},
+      {"name":"Qashqai", "type":"SUV", "year": 2023, "make":car_make_instances[0], "dealer_id": 2},
+      {"name":"XTRAIL", "type":"SUV", "year": 2023, "make":car_make_instances[0], "dealer_id": 3},
+      {"name":"A-Class", "type":"SUV", "year": 2023, "make":car_make_instances[1], "dealer_id": 4},
+      {"name":"C-Class", "type":"SUV", "year": 2023, "make":car_make_instances[1], "dealer_id": 5},
+      {"name":"E-Class", "type":"SUV", "year": 2023, "make":car_make_instances[1], "dealer_id": 6},
+      {"name":"A4", "type":"SUV", "year": 2023, "make":car_make_instances[2], "dealer_id": 7},
+      {"name":"A5", "type":"SUV", "year": 2023, "make":car_make_instances[2], "dealer_id": 8},
+      {"name":"A6", "type":"SUV", "year": 2023, "make":car_make_instances[2], "dealer_id": 9},
+      {"name":"Sorrento", "type":"SUV", "year": 2023, "make":car_make_instances[3], "dealer_id": 10},
+      {"name":"Carnival", "type":"SUV", "year": 2023, "make":car_make_instances[3], "dealer_id": 11},
+      {"name":"Cerato", "type":"Sedan", "year": 2023, "make":car_make_instances[3], "dealer_id": 12},
+      {"name":"Corolla", "type":"Sedan", "year": 2023, "make":car_make_instances[4], "dealer_id": 13},
+      {"name":"Camry", "type":"Sedan", "year": 2023, "make":car_make_instances[4], "dealer_id": 14},
+      {"name":"Kluger", "type":"SUV", "year": 2023, "make":car_make_instances[4], "dealer_id": 15},
     ]
     for data in car_model_data:
-            CarModel.objects.create(name=data['name'], make=data['make'], type=data['type'], year=data['year'])
+            CarModel.objects.create(name=data['name'], make=data['make'], type=data['type'], year=data['year'], dealer_id=data['dealer_id'])
