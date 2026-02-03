@@ -1,0 +1,22 @@
+Sentiment Analyzer Test - February 3, 2026
+
+Command:
+Invoke-WebRequest -Uri "http://localhost:5050/analyze/Fantastic%20services" -Method Get
+
+Response:
+StatusCode        : 200
+StatusDescription : OK
+Content           : {"sentiment": "positive"}
+RawContent        : HTTP/1.1 200 OK
+                    Connection: close
+                    Content-Length: 25
+                    Content-Type: text/html; charset=utf-8
+                    Date: Tue, 03 Feb 2026 06:18:19 GMT
+                    Server: Werkzeug/3.1.5 Python/3.9.18
+
+                    {"sentiment": "positive"}
+
+Result: PASSED ✓
+- Sentiment Analyzer running on http://localhost:5050
+- Analyzed text: "Fantastic services"
+- Detected sentiment: POSITIVE
