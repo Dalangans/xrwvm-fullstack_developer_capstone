@@ -14,6 +14,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
 from .models import CarMake, CarModel
+from .restapis import get_request, analyze_review_sentiments
 
 
 # Get an instance of a logger
@@ -67,18 +68,27 @@ def registration(request):
     else:
         return JsonResponse({"userName":username, "error":"Already Registered"})
         
-# # Update the `get_dealerships` view to render the index page with
-# a list of dealerships
-# def get_dealerships(request):
-# ...
-
-# Create a `get_dealer_reviews` view to render the reviews of a dealer
-# def get_dealer_reviews(request,dealer_id):
-# ...
+# Update the `get_dealerships` view to render the index page with a list of dealerships
+def get_dealerships(request, state="All"):
+    if(state == "All"):
+        endpoint = "/fetchDealers"
+    else:
+        endpoint = "/fetchDealers/"+state
+    dealerships = get_request(endpoint)
+    return JsonResponse({"status":200,"dealers":dealerships})
 
 # Create a `get_dealer_details` view to render the dealer details
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    dealership = get_request("/fetchDealer", dealerId=str(dealer_id))
+    return JsonResponse({"status":200,"dealer":dealership})
+
+# Create a `get_dealer_reviews` view to render the reviews of a dealer
+def get_dealer_reviews(request, dealer_id):
+    reviews = get_request("/fetchReviews/dealer", dealerId=str(dealer_id))
+    if reviews:
+        for review in reviews:
+            review["sentiment"] = analyze_review_sentiments(review["review"]).get("sentiment", "neutral")
+    return JsonResponse({"status":200,"reviews":reviews})
 
 # Create a `add_review` view to submit a review
 # def add_review(request):
