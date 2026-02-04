@@ -23,8 +23,8 @@ import os
 import sys
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoproj.settings')
 
-from djangoapp.populate import initiate_data
-initiate_data()
+from djangoapp.populate import initiate
+initiate()
 END
 
 exec "$@"
