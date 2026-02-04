@@ -2,7 +2,7 @@ import os
 import django
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoproj.settings')
-django.setup()
+django.setup()  # noqa: E402
 
 from djangoapp.models import CarMake, CarModel
 
