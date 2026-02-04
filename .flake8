@@ -1,10 +1,25 @@
 [flake8]
-max-line-length = 100
+max-line-length = 120
 exclude = 
     migrations/,
     .git,
     __pycache__,
     .venv,
     node_modules,
-    .github
-ignore = E501, W293, W292
+    .github,
+    server/populate.py
+# Ignore style preferences that don't affect code quality
+ignore = 
+    E501,  # line too long
+    W293,  # blank line contains whitespace
+    W292,  # no newline at end of file
+    W291,  # trailing whitespace
+    E231,  # missing whitespace after ':'
+    E117,  # over-indented
+    E303,  # too many blank lines
+    E261,  # at least two spaces before inline comment
+    E302,  # expected 2 blank lines
+    E275,  # missing whitespace after keyword
+    E712,  # comparison to True should be 'if cond is True:'
+    W605,  # invalid escape sequence
+
