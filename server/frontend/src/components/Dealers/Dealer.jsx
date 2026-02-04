@@ -75,10 +75,10 @@ const Dealer = () => {
 return(
   <div style={{margin:"20px"}}>
       <Header/>
-      {dealer.full_name ? (
+      {dealer.name || dealer.full_name ? (
         <div style={{marginTop:"10px"}}>
           <h1 style={{color:"grey"}}>
-            {dealer.full_name}
+            {dealer.name || dealer.full_name}
             {isLoggedIn && <a href={post_review_url}><img src={review_icon} style={{width:'10%',marginLeft:'10px',marginTop:'10px'}} alt='Post Review'/></a>}
           </h1>
           <h4 style={{color:"grey"}}>{dealer['city']}, {dealer['address']}, Zip - {dealer['zip']}, {dealer['state']} </h4>
