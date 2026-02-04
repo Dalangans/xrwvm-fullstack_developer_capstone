@@ -1,12 +1,7 @@
 # Uncomment the required imports before adding the code
 
-from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth import logout, login, authenticate
-from django.contrib import messages
-from datetime import datetime
 
 from django.http import JsonResponse
 import logging
@@ -79,15 +74,20 @@ def get_dealerships(request, state="All"):
 
 # Create a `get_dealer_details` view to render the dealer details
 def get_dealer_details(request, dealer_id):
-    dealership = get_request("/fetchDealer", dealerId=str(dealer_id))
+    dealership = get_request(f"/fetchDealer/{dealer_id}")
     return JsonResponse({"status":200,"dealer":dealership})
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 def get_dealer_reviews(request, dealer_id):
-    reviews = get_request("/fetchReviews/dealer", dealerId=str(dealer_id))
+    reviews = get_request(f"/fetchReviews/dealer/{dealer_id}")
     if reviews:
         for review in reviews:
-            review["sentiment"] = analyze_review_sentiments(review["review"]).get("sentiment", "neutral")
+            try:
+                sentiment_result = analyze_review_sentiments(review["review"])
+                review["sentiment"] = sentiment_result.get("sentiment", "neutral") if sentiment_result else "neutral"
+            except Exception as e:
+                print(f"Error analyzing sentiment: {e}")
+                review["sentiment"] = "neutral"
     return JsonResponse({"status":200,"reviews":reviews})
 
 # Create a `add_review` view to submit a review
