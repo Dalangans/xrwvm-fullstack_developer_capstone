@@ -28,11 +28,11 @@ def initiate():
         {"name": "A5", "type": "SUV", "year": 2023, "make": car_make_instances[2], "dealer_id": 8},
         {"name": "A6", "type": "SUV", "year": 2023, "make": car_make_instances[2], "dealer_id": 9},
         {"name": "Sorrento", "type": "SUV", "year": 2023, "make": car_make_instances[3], "dealer_id": 10},
-      {"name":"Carnival", "type":"SUV", "year": 2023, "make":car_make_instances[3], "dealer_id": 11},
-      {"name":"Cerato", "type":"Sedan", "year": 2023, "make":car_make_instances[3], "dealer_id": 12},
-      {"name":"Corolla", "type":"Sedan", "year": 2023, "make":car_make_instances[4], "dealer_id": 13},
-      {"name":"Camry", "type":"Sedan", "year": 2023, "make":car_make_instances[4], "dealer_id": 14},
-      {"name":"Kluger", "type":"SUV", "year": 2023, "make":car_make_instances[4], "dealer_id": 15},
+        {"name": "Carnival", "type": "SUV", "year": 2023, "make": car_make_instances[3], "dealer_id": 11},
+        {"name": "Cerato", "type": "Sedan", "year": 2023, "make": car_make_instances[3], "dealer_id": 12},
+        {"name": "Corolla", "type": "Sedan", "year": 2023, "make": car_make_instances[4], "dealer_id": 13},
+        {"name": "Camry", "type": "Sedan", "year": 2023, "make": car_make_instances[4], "dealer_id": 14},
+        {"name": "Kluger", "type": "SUV", "year": 2023, "make": car_make_instances[4], "dealer_id": 15},
     ]
     for data in car_model_data:
             CarModel.objects.create(name=data['name'], make=data['make'], type=data['type'], year=data['year'], dealer_id=data['dealer_id'])
