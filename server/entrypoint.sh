@@ -16,4 +16,15 @@ else:
     print('Superuser admin already exists')
 END
 
+# Populate database with test data
+echo "Populating database with test data..."
+python manage.py shell << END
+import os
+import sys
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoproj.settings')
+
+from djangoapp.populate import initiate_data
+initiate_data()
+END
+
 exec "$@"
