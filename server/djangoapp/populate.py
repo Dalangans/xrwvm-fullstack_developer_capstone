@@ -1,4 +1,5 @@
 from .models import CarMake, CarModel
+from django.contrib.auth.models import User
 
 def initiate():
     car_make_data = [
@@ -35,4 +36,28 @@ def initiate():
         {"name": "Kluger", "type": "SUV", "year": 2023, "make": car_make_instances[4], "dealer_id": 15},
     ]
     for data in car_model_data:
-            CarModel.objects.create(name=data['name'], make=data['make'], type=data['type'], year=data['year'], dealer_id=data['dealer_id'])
+        CarModel.objects.create(
+            name=data['name'],
+            make=data['make'],
+            type=data['type'],
+            year=data['year'],
+            dealer_id=data['dealer_id']
+        )
+
+    # Create test users
+    test_users = [
+        {'username': 'admin', 'password': 'admin123', 'email': 'admin@dealership.com', 'first_name': 'Admin', 'last_name': 'User'},
+        {'username': 'testuser', 'password': 'test123', 'email': 'test@dealership.com', 'first_name': 'Test', 'last_name': 'User'},
+        {'username': 'john', 'password': 'john123', 'email': 'john@dealership.com', 'first_name': 'John', 'last_name': 'Doe'},
+    ]
+
+    for user_data in test_users:
+        if not User.objects.filter(username=user_data['username']).exists():
+            User.objects.create_user(
+                username=user_data['username'],
+                password=user_data['password'],
+                email=user_data['email'],
+                first_name=user_data['first_name'],
+                last_name=user_data['last_name']
+            )
+            print(f"User {user_data['username']} created successfully")
