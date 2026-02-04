@@ -8,7 +8,7 @@ import logging
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .populate import initiate
-from .models import CarMake, CarModel
+from .models import CarMake, CarModel, Dealership, Review
 from .restapis import get_request, analyze_review_sentiments, post_review
 
 
@@ -67,30 +67,77 @@ def registration(request):
         
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request, state="All"):
-    if state == "All":
-        endpoint = "/fetchDealers"
-    else:
-        endpoint = "/fetchDealers/" + state  # noqa: E226
-    dealerships = get_request(endpoint)
-    return JsonResponse({"status":200,"dealers":dealerships})
+    # Fetch dealerships from Django database instead of Node.js backend
+    try:
+        if state == "All":
+            dealerships = Dealership.objects.all()
+        else:
+            dealerships = Dealership.objects.filter(state=state)
+        
+        dealers_list = []
+        for dealer in dealerships:
+            dealers_list.append({
+                "id": dealer.id,
+                "name": dealer.name,
+                "city": dealer.city,
+                "address": dealer.address,
+                "zip": dealer.zip,
+                "lat": dealer.lat,
+                "long": dealer.long,
+                "state": dealer.state,
+                "short_name": dealer.name.split()[0] if dealer.name else ""
+            })
+        return JsonResponse({"status": 200, "dealers": dealers_list})
+    except Exception as e:
+        logger.error(f"Error fetching dealerships: {e}")
+        return JsonResponse({"status": 500, "dealers": [], "error": str(e)})
 
 # Create a `get_dealer_details` view to render the dealer details
 def get_dealer_details(request, dealer_id):
-    dealership = get_request(f"/fetchDealer/{dealer_id}")
-    return JsonResponse({"status":200,"dealer":dealership})
+    try:
+        dealership = Dealership.objects.get(id=dealer_id)
+        dealer_dict = {
+            "id": dealership.id,
+            "name": dealership.name,
+            "city": dealership.city,
+            "address": dealership.address,
+            "zip": dealership.zip,
+            "lat": dealership.lat,
+            "long": dealership.long,
+            "state": dealership.state,
+            "short_name": dealership.name.split()[0] if dealership.name else ""
+        }
+        return JsonResponse({"status": 200, "dealer": dealer_dict})
+    except Dealership.DoesNotExist:
+        return JsonResponse({"status": 404, "error": "Dealership not found"})
+    except Exception as e:
+        logger.error(f"Error fetching dealer details: {e}")
+        return JsonResponse({"status": 500, "error": str(e)})
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 def get_dealer_reviews(request, dealer_id):
-    reviews = get_request(f"/fetchReviews/dealer/{dealer_id}")
-    if reviews:
+    try:
+        reviews = Review.objects.filter(dealership_id=dealer_id)
+        reviews_list = []
         for review in reviews:
-            try:
-                sentiment_result = analyze_review_sentiments(review["review"])
-                review["sentiment"] = sentiment_result.get("sentiment", "neutral") if sentiment_result else "neutral"
-            except Exception as e:
-                print(f"Error analyzing sentiment: {e}")
-                review["sentiment"] = "neutral"
-    return JsonResponse({"status":200,"reviews":reviews})
+            review_dict = {
+                "id": review.id,
+                "dealership": review.dealership.id,
+                "name": review.name,
+                "purchase": review.purchase,
+                "review": review.review,
+                "purchase_date": review.purchase_date.isoformat() if review.purchase_date else None,
+                "car_make": review.car_make,
+                "car_model": review.car_model,
+                "car_year": review.car_year,
+                "sentiment": review.sentiment,
+                "created_at": review.created_at.isoformat()
+            }
+            reviews_list.append(review_dict)
+        return JsonResponse({"status": 200, "reviews": reviews_list})
+    except Exception as e:
+        logger.error(f"Error fetching reviews: {e}")
+        return JsonResponse({"status": 500, "reviews": [], "error": str(e)})
 
 # Create a `add_review` view to submit a review
 @csrf_exempt
@@ -98,13 +145,36 @@ def add_review(request):
     if request.user.is_anonymous is False:
         data = json.loads(request.body)
         try:
-            post_review(data)
-            return JsonResponse({"status": 200})
-        except Exception:  # noqa: E722
-            return JsonResponse({
-                "status": 401,
-                "message": "Error in posting review"
-            })
+            dealership_id = data.get('dealership')
+            dealership = Dealership.objects.get(id=dealership_id)
+            
+            # Analyze sentiment
+            review_text = data.get('review', '')
+            sentiment = 'neutral'
+            try:
+                sentiment_result = analyze_review_sentiments(review_text)
+                sentiment = sentiment_result.get('sentiment', 'neutral') if sentiment_result else 'neutral'
+            except Exception as e:
+                logger.error(f"Error analyzing sentiment: {e}")
+            
+            # Create review
+            review = Review.objects.create(
+                dealership=dealership,
+                name=data.get('name', request.user.username),
+                purchase=data.get('purchase', False),
+                review=review_text,
+                purchase_date=data.get('purchase_date', None),
+                car_make=data.get('car_make', ''),
+                car_model=data.get('car_model', ''),
+                car_year=data.get('car_year', None),
+                sentiment=sentiment
+            )
+            return JsonResponse({"status": 200, "message": "Review posted successfully"})
+        except Dealership.DoesNotExist:
+            return JsonResponse({"status": 404, "message": "Dealership not found"})
+        except Exception as e:
+            logger.error(f"Error posting review: {e}")
+            return JsonResponse({"status": 401, "message": f"Error in posting review: {str(e)}"})
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
 
