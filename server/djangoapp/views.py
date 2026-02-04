@@ -27,12 +27,14 @@ def login_user(request):
     password = data['password']
     # Try to check if provide credential can be authenticated
     user = authenticate(username=username, password=password)
-    data = {"userName": username}
+    response_data = {"userName": username}
     if user is not None:
         # If user is valid, call login method to login current user
         login(request, user)
-        data = {"userName": username, "status": "Authenticated"}
-    return JsonResponse(data)
+        response_data = {"userName": username, "status": "Authenticated"}
+    else:
+        response_data = {"userName": username, "status": "Incorrect username or password"}
+    return JsonResponse(response_data)
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):
