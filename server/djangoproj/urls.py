@@ -3,10 +3,18 @@ from django.urls import path, include
 from django.views.generic import TemplateView, RedirectView # Tambahkan RedirectView
 from django.conf.urls.static import static
 from django.conf import settings
+from djangoapp import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('djangoapp/', include('djangoapp.urls')),
+    
+    # API endpoints (aliases for frontend compatibility)
+    path('api/fetchDealers', views.get_dealerships, name='api_fetchDealers'),
+    path('api/fetchDealers/<str:state>', views.get_dealerships, name='api_fetchDealers_by_state'),
+    path('api/fetchDealer/<int:dealer_id>', views.get_dealer_details, name='api_fetchDealer'),
+    path('api/fetchReviews/dealer/<int:dealer_id>', views.get_dealer_reviews, name='api_fetchReviews'),
+    path('api/addReview', views.add_review, name='api_addReview'),
     
     path('manifest.json', RedirectView.as_view(url='/static/manifest.json')),
     path('favicon.ico', RedirectView.as_view(url='/static/favicon.ico')),
