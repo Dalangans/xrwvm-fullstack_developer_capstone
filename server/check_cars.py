@@ -1,10 +1,9 @@
-import os  # noqa: E402
-import django  # noqa: E402
+import os
+import django
+from djangoapp.models import CarMake, CarModel
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoproj.settings')
 django.setup()
-
-from djangoapp.models import CarMake, CarModel
 
 print("CarMake count:", CarMake.objects.count())
 print("CarModel count:", CarModel.objects.count())
