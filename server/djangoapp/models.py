@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -39,3 +40,36 @@ class CarModel(models.Model):
 
     def __str__(self):
         return f"{self.make.name} {self.name} ({self.year})"
+
+
+class Dealership(models.Model):
+    """Model to store dealership information"""
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+    zip = models.CharField(max_length=10)
+    lat = models.FloatField()
+    long = models.FloatField()
+    state = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+
+class Review(models.Model):
+    """Model to store dealer reviews"""
+    id = models.IntegerField(primary_key=True)
+    dealership = models.ForeignKey(Dealership, on_delete=models.CASCADE, related_name='reviews')
+    name = models.CharField(max_length=100)
+    purchase = models.BooleanField(default=False)
+    review = models.TextField()
+    purchase_date = models.DateField(null=True, blank=True)
+    car_make = models.CharField(max_length=100, null=True, blank=True)
+    car_model = models.CharField(max_length=100, null=True, blank=True)
+    car_year = models.IntegerField(null=True, blank=True)
+    sentiment = models.CharField(max_length=50, default='neutral')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review of {self.dealership.name} by {self.name}"

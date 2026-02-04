@@ -1,7 +1,10 @@
-from .models import CarMake, CarModel
+from .models import CarMake, CarModel, Dealership, Review
 from django.contrib.auth.models import User
+import json
+import os
 
 def initiate():
+    # Create CarMake instances
     car_make_data = [
         {"name":"NISSAN", "description":"Great cars. Japanese technology"},
         {"name":"Mercedes", "description":"Great cars. German technology"},
@@ -17,7 +20,8 @@ def initiate():
                 description=data['description']
             )
         )
-    # Create CarModel instances with the corresponding CarMake instances
+    
+    # Create CarModel instances
     car_model_data = [
         {"name": "Pathfinder", "type": "SUV", "year": 2023, "make": car_make_instances[0], "dealer_id": 1},
         {"name": "Qashqai", "type": "SUV", "year": 2023, "make": car_make_instances[0], "dealer_id": 2},
@@ -44,6 +48,31 @@ def initiate():
             dealer_id=data['dealer_id']
         )
 
+    # Create dealerships from JSON file
+    dealerships_json_path = os.path.join(os.path.dirname(__file__), '../database/data/dealerships.json')
+    if os.path.exists(dealerships_json_path):
+        try:
+            with open(dealerships_json_path, 'r') as f:
+                dealerships_data = json.load(f)
+                for dealer_data in dealerships_data.get('dealerships', []):
+                    Dealership.objects.get_or_create(
+                        id=dealer_data.get('id'),
+                        defaults={
+                            'name': dealer_data.get('full_name', dealer_data.get('short_name', '')),
+                            'city': dealer_data.get('city', ''),
+                            'address': dealer_data.get('address', ''),
+                            'zip': dealer_data.get('zip', ''),
+                            'lat': dealer_data.get('lat', 0),
+                            'long': dealer_data.get('long', 0),
+                            'state': dealer_data.get('state', ''),
+                        }
+                    )
+                print(f"Dealerships created successfully")
+        except Exception as e:
+            print(f"Error loading dealerships: {e}")
+    else:
+        print(f"Dealerships JSON file not found at {dealerships_json_path}")
+    
     # Create test users
     test_users = [
         {'username': 'admin', 'password': 'admin123', 'email': 'admin@dealership.com', 'first_name': 'Admin', 'last_name': 'User'},
