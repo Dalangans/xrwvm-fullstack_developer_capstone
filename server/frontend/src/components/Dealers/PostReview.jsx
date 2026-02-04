@@ -17,8 +17,8 @@ const PostReview = () => {
   let root_url = curr_url.substring(0,curr_url.indexOf("postreview"));
   let params = useParams();
   let id =params.id;
-  let dealer_url = root_url+`djangoapp/dealer/${id}`;
-  let review_url = root_url+`djangoapp/add_review`;
+  let dealer_url = root_url+`api/fetchDealer/${id}`;
+  let review_url = root_url+`api/addReview`;
   let carmodels_url = root_url+`djangoapp/get_cars`;
 
   const postreview = async ()=>{
@@ -47,20 +47,28 @@ const PostReview = () => {
       "car_year": year,
     });
 
-    console.log(jsoninput);
-    const res = await fetch(review_url, {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: jsoninput,
-  });
+    console.log("Posting review:", jsoninput);
+    try {
+      const res = await fetch(review_url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: jsoninput,
+      });
 
-  const json = await res.json();
-  if (json.status === 200) {
-      window.location.href = window.location.origin+"/dealer/"+id;
-  }
-
+      const json = await res.json();
+      console.log("Review response:", json);
+      if (json.status === 200) {
+          alert("Review posted successfully!");
+          window.location.href = window.location.origin+"/dealer/"+id;
+      } else {
+          alert("Error posting review: " + (json.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Error posting review:", error);
+      alert("Error posting review: " + error.message);
+    }
   }
   const get_dealer = async ()=>{
     const res = await fetch(dealer_url, {
@@ -68,6 +76,7 @@ const PostReview = () => {
     });
     const retobj = await res.json();
     
+    console.log("Dealer response:", retobj);
     if(retobj.status === 200) {
       setDealer(retobj.dealer)
     }
